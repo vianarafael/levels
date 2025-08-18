@@ -1,0 +1,8 @@
+[Unit]
+Description=__APP__ ingest
+
+[Service]
+Type=oneshot
+WorkingDirectory=/srv/__SCOPE__/__APP__/current
+EnvironmentFile=/srv/__SCOPE__/__APP__/.env
+ExecStart=/usr/bin/python3 /srv/__SCOPE__/__APP__/current/app/ingest.py

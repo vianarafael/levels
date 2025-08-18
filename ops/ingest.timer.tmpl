@@ -1,10 +1,8 @@
 [Unit]
-Description=Run Levels Ingest every 10 minutes
-
+Description=Run __APP__ ingest every 10 minutes
 [Timer]
 OnBootSec=2min
 OnUnitActiveSec=10min
-Unit=levels-ingest.service
-
+Unit=__APP__-ingest.service
 [Install]
 WantedBy=timers.target

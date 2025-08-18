@@ -1,0 +1,13 @@
+[Unit]
+Description=__APP__ service
+After=network.target
+
+[Service]
+User=neofto
+WorkingDirectory=/srv/__SCOPE__/__APP__/current
+EnvironmentFile=/srv/__SCOPE__/__APP__/.env
+ExecStart=/srv/__SCOPE__/__APP__/current/.venv/bin/uvicorn app.main:app --host 0.0.0.0 --port __PORT__
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
