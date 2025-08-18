@@ -1,0 +1,73 @@
+# Python bytecode and caches
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# Build artifacts
+build/
+dist/
+*.egg-info/
+*.egg
+
+# Test, type-checking, and tooling caches
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+.coverage.*
+coverage.xml
+htmlcov/
+
+# Logs
+*.log
+logs/
+
+# SQLite databases and WAL/SHM files
+levels.db
+levels.db-*
+*.db
+*.sqlite
+*.sqlite3
+*.db-wal
+*.db-shm
+*.sqlite-wal
+*.sqlite-shm
+*.sqlite3-wal
+*.sqlite3-shm
+
+# Environment files (API keys, secrets)
+.env
+.env.*
+*.env
+!/.env.example
+local/config/*.env
+local/config/*.secrets
+**/openai_api_key*
+**/mistral_api_key*
+
+# Editors/OS
+.DS_Store
+.idea/
+.vscode/
+*.swp
+*.swo
+.direnv/
+.envrc
+.python-version
+.tool-versions
+.ipynb_checkpoints/
+
+# Node (if ever used for tooling)
+node_modules/
+
+# Caches and temp
+.cache/
+.tmp/
+tmp/
+.benchmarks/
+

@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+set -euo pipefail
+source "$(dirname "$0")/../config/paths.env"
+mkdir -p "$OUTBOX/study/notes" "$OUTBOX/build/notes"
+STATE="$LEVELS_HOME/.ship.state"
+case "${1:-help}" in
+  start) echo "$(date -Iseconds),$2,${3:-}" > "$STATE"; echo "started $2 ${3:-}";;
+  stop)
+    if [ ! -f "$STATE" ]; then echo "no active session"; exit 1; fi
+    IFS=',' read -r START KIND SKILL < "$STATE"
+    END=$(date -Iseconds); rm -f "$STATE"
+    echo "$START,$END,$KIND,$SKILL" >> "$OUTBOX/study/notes/sessions.csv"; echo "stopped";;
+  note) shift; f="$OUTBOX/build/notes/$(date +%F).md"; echo "- $(date -Iseconds) $*" >> "$f"; echo "noted";;
+  book) shift; f="$OUTBOX/study/notes/books.md"; echo "- $(date -Iseconds) $*" >> "$f"; echo "logged book";;
+  *) echo "usage: ship start <build|study> [skill]; ship stop; ship note "..."; ship book "..."";;
+esac

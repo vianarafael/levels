@@ -1,0 +1,14 @@
+<!doctype html><html><head>
+<meta charset="utf-8"><title>Levels</title>
+<script src="/static/htmx.min.js"></script>
+<style>
+body{font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;max-width:960px;margin:2rem auto;padding:0 1rem;}
+header{display:flex;gap:1rem;align-items:center;margin-bottom:1rem;}
+nav a{margin-right:1rem;} table{width:100%;border-collapse:collapse;}
+th,td{border-bottom:1px solid #eee;padding:.5rem;}
+.kpi{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin:1rem 0;}
+.card{border:1px solid #eee;border-radius:12px;padding:1rem;}
+</style></head><body>
+<header><h1>Levels</h1><nav><a href="/">Dashboard</a><a href="/health/">Health</a></nav></header>
+{% block body %}{% endblock %}
+</body></html>

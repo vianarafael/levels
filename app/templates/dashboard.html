@@ -1,0 +1,13 @@
+{% extends "base.html" %}{% block body %}
+<div class="kpi">
+  <div class="card"><h3>This Week</h3>
+    {% if week %}<p>{{week.start_date}} → {{week.end_date}}</p>{% else %}<p>No week created yet.</p>{% endif %}
+  </div>
+  <div class="card"><h3>Artifacts (by type)</h3><ul>
+    {% for r in counts %}<li>{{r.kind}}: {{r.n}}</li>{% endfor %}
+  </ul></div>
+  <div class="card"><h3>Study (last 14 days)</h3><ul>
+    {% for s in sessions %}<li>{{s["d"]}} — {{s["m"]}} min</li>{% endfor %}
+  </ul></div>
+</div>
+{% endblock %}

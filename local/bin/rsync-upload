@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+set -euo pipefail
+source "$(dirname "$0")/../config/paths.env"
+source "$(dirname "$0")/../config/server.env"
+mkdir -p "$LOGDIR"
+rsync -azP --delete "$OUTBOX/" "$LEVELS_SSH:$REMOTE_INBOX/" >> "$LOGDIR/upload.log" 2>&1

@@ -1,0 +1,9 @@
+{% extends "base.html" %}{% block body %}
+<h2>Week {{week.id}} — {{week.start_date}} → {{week.end_date}}</h2>
+{% if startup %}<div class="card"><h3>Startup of the Week</h3>
+<p><strong>{{startup.title}}</strong></p><p>Repo: {{startup.repo_url}} · Deployed: {{startup.deployed_url}}</p><p>{{startup.description}}</p></div>{% endif %}
+<div class="card"><h3>Artifacts</h3>
+  <table><tr><th>Kind</th><th>Title</th><th>Path</th><th>Created</th></tr>
+  {% for a in arts %}<tr><td>{{a.kind}}</td><td>{{a.title}}</td><td>{{a.path}}</td><td>{{a.created_at}}</td></tr>{% endfor %}
+  </table></div>
+{% endblock %}

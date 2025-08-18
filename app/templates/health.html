@@ -1,0 +1,8 @@
+{% extends "base.html" %}{% block body %}
+<div class="card"><h3>Ingest Health</h3>
+  <p>Pending: {{pending}} · Errors: {{errors}}</p>
+  <table><tr><th>Path</th><th>Status</th><th>First Seen</th><th>Last Ingested</th><th>Message</th></tr>
+  {% for r in rows %}<tr>
+    <td>{{r["rel_path"]}}</td><td>{{r["status"]}}</td><td>{{r["first_seen"]}}</td><td>{{r["last_ingested"]}}</td><td>{{r["message"]}}</td>
+  </tr>{% endfor %}</table>
+</div>{% endblock %}
