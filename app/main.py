@@ -18,3 +18,4 @@ app.include_router(weeks.router)
 @app.on_event("startup")
 def _startup():
     init_db()
+
