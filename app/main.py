@@ -19,3 +19,4 @@ app.include_router(weeks.router)
 def _startup():
     init_db()
 
+

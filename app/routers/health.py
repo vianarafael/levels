@@ -7,6 +7,7 @@ from ..db import conn
 router = APIRouter(prefix="/health")
 templates = Jinja2Templates(directory=os.path.join(os.path.dirname(__file__), "..", "templates"))
 
+@router.get("")
 @router.get("/", response_class=HTMLResponse)
 def health(request: Request):
     with conn() as c:
