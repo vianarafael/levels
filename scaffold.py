@@ -28,9 +28,9 @@ def main():
   python-dotenv==1.0.1
   """)
   write(".env.example", """
-  LEVELS_DB=/srv/levels/levels.db
-  LEVELS_INBOX=/srv/levels/inbox
-  LEVELS_MEDIA=/srv/levels/media
+  LEVELS_DB=/srv/personal/levels/levels.db
+  LEVELS_INBOX=/srv/personal/levels/inbox
+  LEVELS_MEDIA=/srv/personal/levels/media
   LEVELS_LOG=/var/log/levels
   SECRET_KEY=change-me
   """)
@@ -42,7 +42,7 @@ def main():
 
   install:
 \tpython3 -m venv .venv && . .venv/bin/activate && pip install -r requirements.txt
-\tmkdir -p /srv/levels/{inbox,media}
+\tmkdir -p /srv/personal/levels/{inbox,media}
 \tmkdir -p /var/log/levels
 \tcp .env.example .env || true
 
@@ -258,8 +258,8 @@ def main():
   from pathlib import Path
   from .db import conn
 
-  INBOX = Path(os.environ.get("LEVELS_INBOX", "/srv/levels/inbox"))
-  MEDIA = Path(os.environ.get("LEVELS_MEDIA", "/srv/levels/media"))
+  INBOX = Path(os.environ.get("LEVELS_INBOX", "/srv/personal/levels/inbox"))
+  MEDIA = Path(os.environ.get("LEVELS_MEDIA", "/srv/personal/levels/media"))
 
   def mark(c, rel, status, msg=""):
       c.execute(\"\"\"
@@ -342,8 +342,8 @@ def main():
 
   [Service]
   User=www-data
-  WorkingDirectory=/srv/levels
-  EnvironmentFile=/srv/levels/.env
+  WorkingDirectory=/srv/personal/levels
+  EnvironmentFile=/srv/personal/levels/.env
   ExecStart=/usr/bin/uvicorn app.main:app --host 0.0.0.0 --port 8080
   Restart=always
 
@@ -356,9 +356,9 @@ def main():
 
   [Service]
   Type=oneshot
-  WorkingDirectory=/srv/levels
-  EnvironmentFile=/srv/levels/.env
-  ExecStart=/usr/bin/python3 /srv/levels/app/ingest.py
+  WorkingDirectory=/srv/personal/levels
+  EnvironmentFile=/srv/personal/levels/.env
+  ExecStart=/usr/bin/python3 /srv/personal/levels/app/ingest.py
   """)
   write("server/systemd/levels-ingest.timer", """
   [Unit]
@@ -377,10 +377,10 @@ def main():
   write("scripts/bootstrap.sh", """
   #!/usr/bin/env bash
   set -euo pipefail
-  mkdir -p /srv/levels/{inbox,media}
+  mkdir -p /srv/personal/levels/{inbox,media}
   mkdir -p /var/log/levels
   cp .env.example .env || true
-  echo "Bootstrap done. Edit /srv/levels/.env and run: make install && make dev"
+  echo "Bootstrap done. Edit /srv/personal/levels/.env and run: make install && make dev"
   """)
   make_exec("scripts/bootstrap.sh")
 
@@ -405,7 +405,7 @@ def main():
   """)
   write("scripts/crontab.example", """
   # Ingest inbox every 10 minutes (or change to daily)
-  */10 * * * * /usr/bin/python3 /srv/levels/app/ingest.py >> /var/log/levels/ingest.log 2>&1
+  */10 * * * * /usr/bin/python3 /srv/personal/levels/app/ingest.py >> /var/log/levels/ingest.log 2>&1
   """)
 
   # --- local toolkit
@@ -416,7 +416,7 @@ def main():
   """)
   write("local/config/server.env", """
   export LEVELS_SSH="user@your-server"
-  export REMOTE_INBOX="/srv/levels/inbox"
+  export REMOTE_INBOX="/srv/personal/levels/inbox"
   """)
   write("local/bin/rsync-upload", """
   #!/usr/bin/env bash

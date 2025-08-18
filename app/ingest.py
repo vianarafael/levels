@@ -2,8 +2,8 @@ import os, json, datetime as dt, subprocess
 from pathlib import Path
 from .db import conn
 
-INBOX = Path(os.environ.get("LEVELS_INBOX", "/srv/levels/inbox"))
-MEDIA = Path(os.environ.get("LEVELS_MEDIA", "/srv/levels/media"))
+INBOX = Path(os.environ.get("LEVELS_INBOX", "/srv/personal/levels/inbox"))
+MEDIA = Path(os.environ.get("LEVELS_MEDIA", "/srv/personal/levels/media"))
 
 def mark(c, rel, status, msg=""):
     c.execute("""

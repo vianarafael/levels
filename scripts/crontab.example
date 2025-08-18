@@ -1,2 +1,2 @@
 # Ingest inbox every 10 minutes (or change to daily)
-*/10 * * * * /usr/bin/python3 /srv/levels/app/ingest.py >> /var/log/levels/ingest.log 2>&1
+*/10 * * * * /usr/bin/python3 /srv/personal/levels/app/ingest.py >> /var/log/levels/ingest.log 2>&1

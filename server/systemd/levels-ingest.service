@@ -3,6 +3,6 @@ Description=Levels Ingest Job
 
 [Service]
 Type=oneshot
-WorkingDirectory=/srv/levels
-EnvironmentFile=/srv/levels/.env
-ExecStart=/usr/bin/python3 /srv/levels/app/ingest.py
+WorkingDirectory=/srv/personal/levels
+EnvironmentFile=/srv/personal/levels/.env
+ExecStart=/usr/bin/python3 /srv/personal/levels/app/ingest.py
