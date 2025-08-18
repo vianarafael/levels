@@ -1,4 +1,3 @@
-
 import os, sqlite3
 from contextlib import contextmanager
 
@@ -16,4 +15,5 @@ def conn():
         yield c
     finally:
         c.close()
+
 
