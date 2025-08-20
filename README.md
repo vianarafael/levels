@@ -1,4 +1,4 @@
-## Overview
+## Overview:
 
 Levels is your RPG-style second brain for indie hacking. It automatically captures what you build, study, and learn each week, transforms it into stories and metrics, and shows your progress as XP and levels. Instead of scattered notes and forgotten builds, you get a living character sheet of your startup journey.
 
