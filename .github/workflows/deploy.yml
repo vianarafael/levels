@@ -1,0 +1,28 @@
+name: Deploy Levels (FastAPI)
+on:
+  push: { branches: [main, master] }
+  workflow_dispatch: {}
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    env:
+      SERVER_PATH: /srv/personal/levels
+    steps:
+      - uses: actions/checkout@v4
+      - id: rel
+        run: echo "RELEASE=${GITHUB_SHA::7}-$(date +%Y%m%d%H%M%S)" >> $GITHUB_OUTPUT
+      - run: sudo apt-get update && sudo apt-get install -y rsync
+      - name: SSH config
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SSH_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          printf "Host prod\n  HostName %s\n  User %s\n  Port %s\n  IdentityFile ~/.ssh/id_rsa\n  StrictHostKeyChecking no\n" \
+            "${{ secrets.SSH_HOST }}" "${{ secrets.SSH_USER }}" "${{ secrets.SSH_PORT || 22 }}" > ~/.ssh/config
+      - name: Upload release
+        run: |
+          rsync -az --delete \
+            --exclude '.git' --exclude '.venv' --exclude '__pycache__' \
+            ./ "prod:${SERVER_PATH}/releases/${{ steps.rel.outputs.RELEASE }}/"
+      - name: Activate
+        run: ssh prod "${{ env.SERVER_PATH }}/bin/deploy.sh ${{ steps.rel.outputs.RELEASE }}"

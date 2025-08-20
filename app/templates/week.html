@@ -1,9 +1,139 @@
 {% extends "base.html" %}{% block body %}
-<h2>Week {{week.id}} — {{week.start_date}} → {{week.end_date}}</h2>
-{% if startup %}<div class="card"><h3>Startup of the Week</h3>
-<p><strong>{{startup.title}}</strong></p><p>Repo: {{startup.repo_url}} · Deployed: {{startup.deployed_url}}</p><p>{{startup.description}}</p></div>{% endif %}
-<div class="card"><h3>Artifacts</h3>
-  <table><tr><th>Kind</th><th>Title</th><th>Path</th><th>Created</th></tr>
-  {% for a in arts %}<tr><td>{{a.kind}}</td><td>{{a.title}}</td><td>{{a.path}}</td><td>{{a.created_at}}</td></tr>{% endfor %}
-  </table></div>
+
+<h2>📅 Week {{week.id}} — {{week.start_date}} → {{week.end_date}}</h2>
+
+<!-- Week Summary -->
+<div class="summary-section">
+  <h3>⏱️ Time Invested This Week</h3>
+  <div class="summary-grid">
+    <div class="time-card">
+      <h4>Total Time</h4>
+      <div class="time-stats">
+        <div class="time-item">
+          <span class="time-number">{{(week_study_time/60)|round(1)}}</span>
+          <span class="time-label">hours studying</span>
+        </div>
+        <div class="time-item">
+          <span class="time-number">{{(week_build_time/60)|round(1)}}</span>
+          <span class="time-label">hours building</span>
+        </div>
+        <div class="time-item total">
+          <span class="time-number"
+            >{{((week_study_time + week_build_time)/60)|round(1)}}</span
+          >
+          <span class="time-label">total hours</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="outcome-card">
+      <h4>Outcomes This Week</h4>
+      <div class="outcome-grid">
+        {% for artifact in art_counts %}
+        <div class="outcome-item">
+          <span class="outcome-number">{{artifact.n}}</span>
+          <span class="outcome-label">{{artifact.kind}}</span>
+        </div>
+        {% endfor %} {% if not art_counts %}
+        <div class="outcome-item">
+          <span class="outcome-number">0</span>
+          <span class="outcome-label">artifacts</span>
+        </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Startup Project -->
+{% if startup %}
+<div class="card" style="margin: 2rem 0">
+  <h3>🚀 Startup of the Week</h3>
+  <p><strong>{{startup.title}}</strong></p>
+  <p>Repo: {{startup.repo_url}} · Deployed: {{startup.deployed_url}}</p>
+  <p>{{startup.description}}</p>
+</div>
+{% endif %}
+
+<!-- Week Metrics -->
+{% if week_metrics %}
+<div class="card" style="margin: 2rem 0">
+  <h3>📈 Week Metrics</h3>
+  {% for metric in week_metrics %}
+  <div style="margin: 1rem 0; padding: 1rem; background: #f8f9fa; border-radius: 8px;">
+    <h4>{{metric.title}}</h4>
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem; margin-top: 0.5rem;">
+      {% if metric.parsed_data %}
+        {% for key, value in metric.parsed_data.items() %}
+          {% if key != 'week' and key != 'app' %}
+          <div style="text-align: center;">
+            <div style="font-size: 1.5rem; font-weight: bold; color: #28a745;">{{value}}</div>
+            <div style="font-size: 0.8rem; color: #666; text-transform: capitalize;">{{key.replace('_', ' ')}}</div>
+          </div>
+          {% endif %}
+        {% endfor %}
+      {% endif %}
+    </div>
+  </div>
+  {% endfor %}
+</div>
+{% endif %}
+
+<!-- Session Details -->
+{% if week_sessions %}
+<div class="card" style="margin: 2rem 0">
+  <h3>📊 Session Details</h3>
+  <table>
+    <tr>
+      <th>Date</th>
+      <th>Duration</th>
+      <th>Type</th>
+      <th>Notes</th>
+    </tr>
+    {% for s in week_sessions %}
+    <tr>
+      <td>{{s.started_at[:10]}}</td>
+      <td>{{s.minutes}}min</td>
+      <td>{{s.kind}}</td>
+      <td>{{s.notes or "—"}}</td>
+    </tr>
+    {% endfor %}
+  </table>
+</div>
+{% endif %}
+
+<!-- Artifacts Details -->
+{% if arts %}
+<div class="card" style="margin: 2rem 0">
+  <h3>📁 Artifacts Created</h3>
+  <table>
+    <tr>
+      <th>Type</th>
+      <th>Title</th>
+      <th>Created</th>
+      <th>Path</th>
+    </tr>
+    {% for a in arts %}
+    <tr>
+      <td><span class="artifact-badge">{{a.kind}}</span></td>
+      <td>{{a.title}}</td>
+      <td>{{a.created_at[:10]}}</td>
+      <td><small>{{a.path}}</small></td>
+    </tr>
+    {% endfor %}
+  </table>
+</div>
+{% endif %}
+
+<style>
+  .artifact-badge {
+    background: #e3f2fd;
+    color: #1976d2;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    text-transform: capitalize;
+  }
+</style>
+
 {% endblock %}

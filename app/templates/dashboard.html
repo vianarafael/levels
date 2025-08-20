@@ -1,13 +1,213 @@
 {% extends "base.html" %}{% block body %}
-<div class="kpi">
-  <div class="card"><h3>This Week</h3>
-    {% if week %}<p>{{week.start_date}} → {{week.end_date}}</p>{% else %}<p>No week created yet.</p>{% endif %}
+
+<!-- Top Row: KPIs with Deltas -->
+<div class="kpi-row">
+  <div class="kpi-card">
+    <div class="kpi-header">
+      <div class="kpi-number">{{this_week_hours|round(1)}}</div>
+      <div
+        class="kpi-info"
+        data-tooltip="Total hours logged in sessions this week (Monday-Sunday)"
+      >
+        ℹ
+      </div>
+    </div>
+    <div class="kpi-label">Hours</div>
+    <div
+      class="kpi-delta {% if hours_delta >= 0 %}positive{% else %}negative{% endif %}"
+    >
+      {% if hours_delta >= 0 %}+{% endif %}{{hours_delta|round(1)}}
+    </div>
   </div>
-  <div class="card"><h3>Artifacts (by type)</h3><ul>
-    {% for r in counts %}<li>{{r.kind}}: {{r.n}}</li>{% endfor %}
-  </ul></div>
-  <div class="card"><h3>Study (last 14 days)</h3><ul>
-    {% for s in sessions %}<li>{{s["d"]}} — {{s["m"]}} min</li>{% endfor %}
-  </ul></div>
+
+  <div class="kpi-card">
+    <div class="kpi-header">
+      <div class="kpi-number">{{this_week_artifacts}}</div>
+      <div
+        class="kpi-info"
+        data-tooltip="Total outputs created this week (notes, recordings, repos, etc.)"
+      >
+        ℹ
+      </div>
+    </div>
+    <div class="kpi-label">Artifacts</div>
+    <div
+      class="kpi-delta {% if artifacts_delta >= 0 %}positive{% else %}negative{% endif %}"
+    >
+      {% if artifacts_delta >= 0 %}+{% endif %}{{artifacts_delta}}
+    </div>
+  </div>
+
+  <div class="kpi-card">
+    <div class="kpi-header">
+      <div class="kpi-number">{{this_week_planned_points}}</div>
+      <div
+        class="kpi-info"
+        data-tooltip="Story points for tasks still pending completion this week"
+      >
+        ℹ
+      </div>
+    </div>
+    <div class="kpi-label">Planned Points</div>
+    <div
+      class="kpi-delta {% if planned_points_delta >= 0 %}positive{% else %}negative{% endif %}"
+    >
+      {% if planned_points_delta >= 0 %}+{% endif %}{{planned_points_delta}}
+    </div>
+  </div>
+
+  <div class="kpi-card">
+    <div class="kpi-header">
+      <div class="kpi-number">{{this_week_delivered_points}}</div>
+      <div
+        class="kpi-info"
+        data-tooltip="Story points for tasks completed this week - your velocity"
+      >
+        ℹ
+      </div>
+    </div>
+    <div class="kpi-label">Delivered Points</div>
+    <div
+      class="kpi-delta {% if delivered_points_delta >= 0 %}positive{% else %}negative{% endif %}"
+    >
+      {% if delivered_points_delta >= 0 %}+{% endif %}{{delivered_points_delta}}
+    </div>
+  </div>
+
+  <div class="kpi-card">
+    <div class="kpi-header">
+      <div class="kpi-number">{{output_score|round(1)}}</div>
+      <div
+        class="kpi-info"
+        data-tooltip="Overall productivity score: artifacts + (hours ÷ 10)"
+      >
+        ℹ
+      </div>
+    </div>
+    <div class="kpi-label">OutputScore</div>
+    <div
+      class="kpi-delta {% if score_delta >= 0 %}positive{% else %}negative{% endif %}"
+    >
+      {% if score_delta >= 0 %}+{% endif %}{{score_delta|round(1)}}
+    </div>
+  </div>
 </div>
+
+<!-- Sparkline -->
+<div class="sparkline-section">
+  <h3>Last 14 Days Activity</h3>
+  <div class="chart-container">
+    {% set max_minutes = daily_minutes|map(attribute='total_min')|max or 1 %}
+
+    <!-- Y-axis labels -->
+    <div class="y-axis">
+      <div class="y-label">{{max_minutes|round|int}}min</div>
+      <div class="y-label">{{(max_minutes * 0.5)|round|int}}min</div>
+      <div class="y-label">0min</div>
+    </div>
+
+    <!-- Main chart -->
+    <div class="chart-area">
+      <svg class="sparkline" viewBox="0 0 700 160" preserveAspectRatio="none">
+        <!-- Grid lines -->
+        <line
+          x1="0"
+          y1="120"
+          x2="700"
+          y2="120"
+          stroke="#f0f0f0"
+          stroke-width="1"
+        />
+        <line
+          x1="0"
+          y1="60"
+          x2="700"
+          y2="60"
+          stroke="#f0f0f0"
+          stroke-width="1"
+        />
+        <line x1="0" y1="0" x2="700" y2="0" stroke="#f0f0f0" stroke-width="1" />
+
+        <!-- Bars -->
+        {% for day in daily_minutes %} {% set x = loop.index0 * 50 %} {% set
+        height = (day.total_min / max_minutes * 120)|round %}
+        <rect
+          x="{{x}}"
+          y="{{120 - height}}"
+          width="40"
+          height="{{height}}"
+          fill="#007bff"
+          rx="3"
+        />
+        <!-- Value labels on bars -->
+        {% if day.total_min > 0 %}
+        <text
+          x="{{x + 20}}"
+          y="{{120 - height - 8}}"
+          text-anchor="middle"
+          font-size="11"
+          fill="#666"
+          font-weight="500"
+        >
+          {{day.total_min|round|int}}
+        </text>
+        {% endif %} {% endfor %}
+      </svg>
+
+      <!-- Day labels -->
+      <div class="day-labels">
+        {% for day in daily_minutes %}
+        <div class="day-label">{{day.d[-5:]}}</div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Latest Metrics -->
+{% if latest_metrics %}
+<div class="metrics-section">
+  <h3>Latest Metrics</h3>
+  <ul class="output-list">
+    {% for metric in latest_metrics %}
+    <li class="output-item">
+      <span class="output-type metric">metric</span>
+      <span class="output-title">{{metric.title}}</span>
+      <span class="output-date">{{metric.created_at[:10]}}</span>
+      <span class="metric-data">
+        {% if metric.parsed_data %} {% for key, value in
+        metric.parsed_data.items() %} {% if key != 'week' and key != 'app'
+        %}{{key}}: {{value}}{% if not loop.last %}, {% endif %}{% endif %} {%
+        endfor %} {% endif %}
+      </span>
+    </li>
+    {% endfor %}
+  </ul>
+</div>
+{% endif %}
+
+<!-- Latest Outputs -->
+<div class="outputs-section">
+  <h3>Latest 10 Outputs</h3>
+  <ul class="output-list">
+    {% for output in latest_outputs %}
+    <li class="output-item">
+      <span class="output-type">{{output.kind}}</span>
+      <span class="output-title">{{output.title}}</span>
+      {% if output.kind == 'task' and output.estimate_points %}
+      <span class="task-points">({{output.estimate_points}}pts)</span>
+      {% if output.status == 'done' %}
+      <span class="task-status done">✓</span>
+      {% else %}
+      <span class="task-status pending">•</span>
+      {% endif %} {% endif %}
+      <span class="output-date">{{output.created_at[:10]}}</span>
+      {% if output.path %}
+      <a href="file://{{output.path}}" class="output-link">↗</a>
+      {% endif %}
+    </li>
+    {% endfor %}
+  </ul>
+</div>
+
 {% endblock %}

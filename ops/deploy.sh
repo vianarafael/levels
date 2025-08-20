@@ -1,23 +1,19 @@
 #!/usr/bin/env bash
 set -euo pipefail
-# Usage: APP=levels SCOPE=personal ./ops/deploy.sh [--no-restart]
+# Usage: APP=levels SCOPE=personal TARGET=rafael ./ops/deploy.sh
+
 APP="${APP:-levels}"
-SCOPE="${SCOPE:-personal}"              # personal|startups|anything
-TARGET="${TARGET:-rafael}"               # ssh alias
-REMOTE="/srv/${SCOPE}/${APP}/current"
-SERVICE="${SERVICE:-$APP}"
-NO_RESTART="${1:-}"
+SCOPE="${SCOPE:-personal}"        # personal|startups|...
+TARGET="${TARGET:-rafael}"         # ssh alias in ~/.ssh/config
+BASE="/srv/${SCOPE}/${APP}"
+REL="$(git rev-parse --short HEAD)-$(date +%Y%m%d%H%M%S)"
 
-echo "🔄 Syncing -> $TARGET:$REMOTE"
-rsync -avz --delete --delete-excluded \
+echo "📤 Uploading release $REL -> $TARGET:$BASE/releases/$REL/"
+rsync -az --delete \
   --exclude '.git' --exclude '.venv' --exclude '__pycache__' --exclude '.DS_Store' \
-  ./ "$TARGET:$REMOTE/"
+  ./ "$TARGET:$BASE/releases/$REL/"
 
-if [ "$NO_RESTART" = "--no-restart" ]; then
-  echo "⏭️  Skipping restart"; exit 0
-fi
+echo "🚀 Activating release on server…"
+ssh "$TARGET" "$BASE/bin/deploy.sh $REL"
 
-echo "🚀 Restarting $SERVICE"
-# use -t for interactive sudo; remove -t after adding sudoers rule
-ssh -t "$TARGET" "sudo systemctl restart '$SERVICE' || true; systemctl status '$SERVICE' --no-pager -n 5 || true"
-echo "✅ Deployed"
+echo "✅ Done"

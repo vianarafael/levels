@@ -13,6 +13,10 @@ def conn():
     c.row_factory = sqlite3.Row
     try:
         yield c
+        c.commit()  # Commit on successful exit
+    except:
+        c.rollback()  # Rollback on error
+        raise
     finally:
         c.close()
 

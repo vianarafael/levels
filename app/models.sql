@@ -21,6 +21,8 @@ CREATE TABLE IF NOT EXISTS artifact (
   startup_id INTEGER REFERENCES startup(id) ON DELETE SET NULL,
   kind TEXT, title TEXT, path TEXT,
   text_content TEXT, meta_json TEXT,
+  estimate_points INTEGER,
+  status TEXT DEFAULT 'pending',
   created_at TEXT DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -28,7 +30,6 @@ CREATE TABLE IF NOT EXISTS session_log (
   id INTEGER PRIMARY KEY,
   started_at TEXT, ended_at TEXT, minutes INTEGER,
   kind TEXT,    -- build|study
-  skill TEXT,   -- fastapi|vectordb|etl|indiehacker|neovim|vibe
   notes TEXT
 );
 
