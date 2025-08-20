@@ -104,3 +104,19 @@ after droping files ru
 
 ./daily.sh sync # Make sure everything is processed
 ```
+
+## main dashboard
+
+📊 Time Invested & Outcomes
+┌─────────────────┬─────────────────┐
+│ ⏱️ Total Time │ 🎯 All-Time │
+│ 2.6h studying │ 2 notes │
+│ 1.2h building │ 1 study_note │  
+│ 3.8h total │ │
+└─────────────────┴─────────────────┘
+
+🎯 Time by Focus Area:
+fastapi: 2.2h (study: 1.7h, build: 0.5h)
+etl: 0.8h (study: 0.0h, build: 0.8h)
+vectordb: 0.5h (study: 0.5h, build: 0.0h)
+indiehacker: 0.3h (study: 0.3h, build: 0.0h)
